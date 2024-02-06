@@ -1,1 +1,1 @@
-hi
+//Global varibles 
