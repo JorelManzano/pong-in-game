@@ -1,5 +1,5 @@
-int playerSize = 100;
-int spaceToWall = 10;
+int playerSize = 150;
+int spaceToWall = 30;
 int radius = 20;
 int middleLineSize;
 int paddleWidth = 10;
@@ -98,7 +98,7 @@ private void checkWallCollision()
 private void showText()
 {
   fill(#FFFFFF);
-  textSize(75);
+  textSize(100);
   text(playerOne.getScore(), width/2 - width/5, 75);
   text(playerTwo.getScore(), width/2 + width/5, 75);
 }

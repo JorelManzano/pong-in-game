@@ -25,8 +25,8 @@ class Ball
     if((int) p.random(1) + 2 == 4)
       directionY *= -1;
       
-    x = p.width / 2;
-    y = p.height / 2;
+    x = p.width / 4;
+    y = p.height / 4;
   }
 
   protected int getPosition(char position)
