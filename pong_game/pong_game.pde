@@ -1,121 +1,83 @@
-int playerSize = 150;
-int spaceToWall = 30;
-int radius = 20;
-int middleLineSize;
-int paddleWidth = 10;
-boolean VK_UP = false;
-boolean VK_DOWN = false;
-boolean w = false;
-boolean s = false;
-Ball ball = new Ball(this, playerSize, spaceToWall, radius, paddleWidth);
-Player playerOne = new Player(this, playerSize);
-Player playerTwo = new Player(this, playerSize);
-
-void setup()
-{
-  size(1000, 1000);
-  surface.setResizable(true);
-  surface.setTitle("Ping Pong || Made by Serapis");
-}
-
-void draw()
-{
-  background(0);
-  middleLineSize = width/500;
-  drawMiddleLine();
-  noStroke();
-  ball.move(playerOne.y, playerTwo.y);
-  drawBall();
-  drawPlayerOne();
-  drawPlayerTwo();
-  checkWallCollision();
-  showText();
-  move();
-}
-
-void keyPressed()
-{
-  if (keyCode == UP)
-    VK_UP = true;
-  if (keyCode == DOWN)
-    VK_DOWN = true;
-  if (key == 'w' || key == 'W')
-    w = true;
-  if (key == 's' || key == 'S')
-    s = true;
-}
-
-void keyReleased()
-{
-  if (keyCode == UP)
-    VK_UP = false;
-  if (keyCode == DOWN)
-    VK_DOWN = false;
-  if (key == 'w' || key == 'W')
-    w = false;
-  if (key == 's' || key == 'S')
-    s = false;
-}
-
-private void drawBall()
-{
-  fill(#B71825);
-  circle(ball.getPosition('x'), ball.getPosition('y'), radius);
-}
-
-private void drawPlayerOne()
-{
-  fill(#0F1293);
-  rect(spaceToWall, playerOne.getY(), paddleWidth, playerSize);
-}
-
-private void drawPlayerTwo()
-{
-  fill(#0F1293);
-  rect(width - paddleWidth - spaceToWall, playerTwo.getY(), paddleWidth, playerSize);
-}
-
-private void drawMiddleLine()
-{
-  stroke(200);
-  strokeWeight(middleLineSize);
-  line(width/2, height, width/2, 0);
-}
-
-private void checkWallCollision()
-{
-  if (ball.getPosition('x') <= 0)
-  {
-    playerTwo.updateScore();
-    restart();
-  } else if (ball.getPosition('x') >= width)
-  {
-    playerOne.updateScore();
-    restart();
+//Global Variables and Objects
+Ball myBall, movedBall;
+Ball[] fireworks = new Ball[25];
+Paddle myPaddle, yourPaddle;
+//
+color pongTableColour = 255; //ERROR: move to Table CLASS, 255 is full BLUE
+float gravity=0.5;
+//
+void setup() {
+  size(600, 400); //fullScreen(); displayWidth, displayHeight
+  /*ScreenSizeChecker() for Landscape, Protrait, Square views
+   Updated Automatically for screen rotation on Android
+   */
+  //Population
+  myBall = new Ball(); // Both 1/2's of Constructor
+  for (int i=0; i < fireworks.length; i++) {
+    fireworks[i] = new Ball(width*-1, height*-1, 0.5);
   }
+  movedBall = new Ball(width*-1, height*-1, myBall.diameter, myBall.colour, myBall.xSpeed, myBall.ySpeed, myBall.xSpeedChange, myBall.ySpeedChange);
+  myPaddle = new Paddle( 0, myBall.diameter );
+  yourPaddle = new Paddle( width, myBall.diameter );
+  //
+} //End setup
+//
+void draw() {
+  background(pongTableColour); //ERROR: Night Mode is know in CLASS, not DRIVER
+  //
+  //Paddles drawn before the ball
+  myPaddle.draw();
+  yourPaddle.draw();
+  //
+  //Update the Paddle Position for the Ball, before drawing the Ball
+  //This update does not need to run in draw(), only at end of setup()
+  //Note: pick a paddle that will always be instantiated here
+  //Note: easier to iterate through an array here than somewhere else
+  // float paddleWidthParameter, float myPaddleHeightParameter, float yourPaddleHeightParameter
+  myBall.tableYUpdate(myPaddle.tableX, myPaddle.tableY, myPaddle.tableWidth, myPaddle.tableHeight, myPaddle.paddleX, yourPaddle.paddleX, myPaddle.paddleY, yourPaddle.paddleY, myPaddle.paddleWidth, myPaddle.paddleHeight, yourPaddle.paddleHeight);
+  //movedBall.tableYUpdate(myPaddle.tableY, myPaddle.tableHeight, myPaddle.tableWidth, myPaddle.tableX, myPaddle.paddleX, yourPaddle.paddleX, myPaddle.paddleY, yourPaddle.paddleY, myPaddle.paddleWidth, myPaddle.paddleHeight, yourPaddle.paddleHeight);
+  //
+  if ( myBall.disappear == true ) {
+    //EMPTY IF
+    //myBall.step(); //Keeps active the variables but not .draw
+  } else {
+    myBall.draw();
+  }
+  if ( movedBall.disappear == true ) {
+    //EMPTY IF
+    //myBall.step(); //Keeps active the variables but not .draw
+  } else {
+    movedBall.draw();
+  }
+  // Trigger: Left Goal, Right Goal
+  // ERROR: Ball Instance still bounces
+  if ( myBall.x<(2*myBall.diameter) || myBall.x>( width - (2*myBall.diameter) ) ) myBall.goalExplosion(myBall.x, myBall.y, gravity);
+  //
+  //Turned off for first ball to wrok
+  //if ( movedBall.x<(2*movedBall.diameter) || movedBall.x>( width - (2*movedBall.diameter) ) ) movedBall.goalExplosion(movedBall.x, movedBall.y, gravity);
+  //
+  //Does "infront of ball" make a difference
+  for (int i=0; i < fireworks.length; i++) {
+    fireworks[i].draw(); //
+  }
+} //End draw
+//
+void keyPressed() {
+  myPaddle.keyPressedWASD();
+  yourPaddle.keyPressedARROW();
+} //End keyPressed
+//
+void keyReleased() {
+  myPaddle.keyReleasedWASD();
+  yourPaddle.keyReleasedARROW();
 }
+void mousePressed() {
+  //
 
-private void showText()
-{
-  fill(#FFFFFF);
-  textSize(100);
-  text(playerOne.getScore(), width/2 - width/5, 75);
-  text(playerTwo.getScore(), width/2 + width/5, 75);
-}
-
-private void restart()
-{
-  ball = new Ball(this, playerSize, spaceToWall, radius, paddleWidth);
-}
-
-private void move()
-{
-  if (w)
-    playerOne.move("up");
-  if (s)
-    playerOne.move("down");
-  if (VK_UP)
-    playerTwo.move("up");
-  if (VK_DOWN)
-    playerTwo.move("down");
-}
+  movedBall = new Ball(mouseX, mouseY, myBall.diameter, myBall.colour, myBall.xSpeed, myBall.ySpeed, myBall.xSpeedChange, myBall.ySpeedChange);
+  //CAUTION: only brings forth myBall, not last known movedBall
+  //Note: .draw is not being executed so
+  //myBall.disappear = true;
+} //End mousePressed
+//
+//End DRIVER
