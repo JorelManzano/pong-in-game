@@ -37,8 +37,10 @@ class Paddle {
     fill(0); //Reset Defaults
     //
     //Arithmetic for Paddles
+    /*
     if ( up == true ) movePaddleUp();
     if ( down == true ) movePaddleDown();
+    */
   } //End draw
   //
   //VOIDS and Returns
@@ -46,31 +48,17 @@ class Paddle {
   void paddles() {
     rect(paddleX, paddleY, paddleWidth, paddleHeight);
   } //End Paddles
+  /*
   void movePaddleDown() {
     paddleY += paddleTravelDistance;
     if ( paddleY > tableY+tableHeight-paddleHeight ) paddleY = tableY+tableHeight-paddleHeight; //ERROR Catch
-    //down = false; //ERROR: boolean reset means one paddle at a time, no gamie
+    down = false;
   } //End Move Paddles
   void movePaddleUp() {
     paddleY -= paddleTravelDistance;
     if ( paddleY < tableY ) paddleY = tableY; //ERROR Catch
-    //up = false; //ERROR: boolean reset means one paddle at a time, no gamie
+    up = false;
   } //End Move Paddles
+  */
   //
-  void keyPressedWASD() {
-    if ( key=='W' | key=='w' ) up=true ;
-    if ( key=='S' | key=='s' ) down=true;
-  }
-  void keyPressedARROW() {
-    if ( key==CODED & keyCode==UP ) up=true;
-    if ( key==CODED & keyCode==DOWN ) down=true;
-  }
-  void keyReleasedWASD() {
-    if ( key=='W' | key=='w' ) up=false ;
-    if ( key=='S' | key=='s' ) down=false;
-  }
-  void keyReleasedARROW() {
-    if ( key==CODED & keyCode==UP ) up=false;
-    if ( key==CODED & keyCode==DOWN ) down=false;
-  }
 } //End Paddle
